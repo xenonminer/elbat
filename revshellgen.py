@@ -25,16 +25,19 @@ def generate_revshell_payload(host, port, type):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate reverse shell payload")
     parser.add_argument(
-        host="host",
+        "--host",
         help="Host to connect back to",
+        required=True
     )
     parser.add_argument(
-        port="port",
+        "--port",
         help="Port to connect back to",
+        required=True
     )
     parser.add_argument(
-        type="type",
+        "--type",
         help="Type of reverse shell",
+        required=True
     )
 
     args = parser.parse_args()
